@@ -5,6 +5,30 @@ import numpy as np
 import os
 import csv
 
+class DropAssay():
+	def __init__ (self, assay_data_path):
+		
+		self.frames = {}
+		log_data = self.LoadLog(assay_data_path + '/log_data.csv')
+		for row in log_data:
+			id_number = row[0]
+			temperature = row[1]
+			frame = {}
+			frame['events'] = []
+			frame['id'] = id_number
+			frame['image_path'] = assay_data_path + '/' + str(id_number) + '.png'
+			self.frames[id_number] = frame
+		
+	
+	def LoadLog(self, log_path):
+		log_data = []
+		with open(log_path, 'r') as csvfile:
+			reader = csv.reader(csvfile, delimiter = ',')
+			log_data = [(int(row[1]), float(row[3])) for index, row in enumerate(reader) if index > 0]
+		return log_data
+		
+		
+		
 class ImageWindow():
 	def __init__ (self):
 		# Create a Tkinter root window.
@@ -168,8 +192,15 @@ class ImageWindow():
 			#~self.annotation_ids.append(annotation_id)
 
 if __name__ == "__main__":
-	image_window = ImageWindow()
-	#print image_window.coordinates
-	for current_entry in image_window.results:
-		print(current_entry[0], current_entry[1], current_entry[2], current_entry[3])
+	#~image_window = ImageWindow()
+	#~#print image_window.coordinates
+	#~for current_entry in image_window.results:
+		#~print(current_entry[0], current_entry[1], current_entry[2], current_entry[3])
+	
+	# Select a directory.
+	assay_data_path = filedialog.askdirectory()
+	print(assay_data_path)
+	
+	test = DropAssay(assay_data_path)
+	
 	
