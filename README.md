@@ -13,6 +13,7 @@ To Run Cold Stage 4:
 --------------------
 
 In the program directory, enter ipython drop_assay_processing_tool.py at the command line.
+A short video demonstrating the use of the tool can be found [here](https://www.youtube.com/watch?v=IP2t19gC9Ec)
 
 Licence:
 --------
