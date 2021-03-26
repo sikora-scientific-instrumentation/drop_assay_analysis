@@ -9,7 +9,7 @@ Installation instructions:
 Python:
 * Install Anaconda Python 3 (>= 3.8.5) - this will come with all the popular Python modules.
 
-To Run Cold Stage 4:
+To run the tool:
 --------------------
 
 In the program directory, enter ipython drop_assay_processing_tool.py at the command line.
