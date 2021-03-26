@@ -93,7 +93,8 @@ class DropAssayViewer():
 		# If we have more than one event, total:
 		if len(output_table) > 1:
 			# Temperatures may not be monotonically increasing, sort output table by temperature to mitigate this.
-			output_table.sort()
+			# (we reverse the order to get temperature decreasing ->
+			output_table.sort(reverse = True)
 			
 			# Merge adjacent entries with identical temperatures (may result from previous operation).
 			merged_output_table = []
@@ -110,17 +111,32 @@ class DropAssayViewer():
 			output_table = merged_output_table
 		
 		print(output_table)
+		self.WriteOutput(output_table)
 		
 		self.root.destroy()
+	
+	def WriteOutput(self, output_table):
+		with open('fraction_frozen.csv', 'w', newline='') as csvfile:
+			writer = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+			for row in output_table:
+				writer.writerow(row)
 	
 	def LoadImage(self):
 		frame_id = self.frame_ids[self.current_frame_index]
 		image_path = self.drop_assay.frames[frame_id]['image_path']
+		try:
+			self.canvas.delete(self.canvas_no_image_warning)
+		except:
+			pass
 		if image_path != 'FILE_NOT_FOUND':
 			self.img = ImageTk.PhotoImage(Image.open(image_path))
 			self.canvas.create_image(0, 0, image = self.img, anchor = "nw")
 		else:
-			print('No image file found for this frame number!')
+			self.img = ImageTk.PhotoImage(Image.new('RGB', (640, 480)))
+			self.canvas.create_image(0, 0, image = self.img, anchor = "nw")
+			#~self.text_font = ImageFont.truetype("./DejaVuSansMono.ttf", 12)
+			self.canvas_no_image_warning = self.canvas.create_text(320,240,fill="red",font="Times 30 bold",text="No image file found for this frame!")
+			print('No image file found for this frame!')
 		self.AnnotateFrame()
 		self.AnnotateEvents()
 	
@@ -179,15 +195,20 @@ class DropAssayViewer():
 			pass
 		self.canvas_temperature = self.canvas.create_text(5,70,fill="blue",font="Times 20 bold",text=str(temperature) + ' °C', anchor = tk.SW)
 		
+		try:
+			self.canvas.delete(self.canvas_instructions)
+		except:
+			pass
+		self.canvas_instructions = self.canvas.create_text(635,40,fill="blue",font="Times 30 bold",text="<-- A / S -->", anchor = tk.SE)
+		
 	def AnnotateEvents(self):
 		current_frame_index = self.current_frame_index
 		current_frame_id = self.frame_ids[current_frame_index]
 		try:
 			for annotation_id in self.annotation_ids:
-				self.canvas.delete(self.annotation_id)
-			self.annotation_ids = []
+				self.canvas.delete(annotation_id)
 		except:
-			self.annotation_ids = []
+			pass
 		self.annotation_ids = []
 		for frame_id in self.frame_ids:
 			if frame_id <= current_frame_id:
@@ -197,9 +218,9 @@ class DropAssayViewer():
 						x_coord = event[0]
 						y_coord = event[1]
 						if current_frame_id == frame_id:
-							annotation_id = self.canvas.create_text(x_coord, y_coord,fill="red",font="Times 20 bold",text='O')
+							annotation_id = self.canvas.create_text(x_coord, y_coord,fill="yellow",font="Times 20 bold",text='O')
 						else:
-							annotation_id = self.canvas.create_text(x_coord, y_coord,fill="blue",font="Times 20 bold",text='O')
+							annotation_id = self.canvas.create_text(x_coord, y_coord,fill="red",font="Times 20 bold",text='O')
 						self.annotation_ids.append(annotation_id)
 			
 if __name__ == "__main__":
