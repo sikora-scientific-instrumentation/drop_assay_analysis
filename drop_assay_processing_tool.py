@@ -1,14 +1,12 @@
 """
 ########################################################################
 #                                                                      #
-#                  Drop-assay data processing tool                     #
+#                  Drop-assay data-processing tool                     #
 #                  Copyright 2021 Sebastien Sikora                     #
 #                    sikora.scientific@gmail.com                       #
 #                                                                      #
 #                                                                      #
 ########################################################################
-
-	This file is part of the drop-assay data-processing tool.
 
 	The drop-assay data-processing tool is free software: you can 
 	redistribute it and/or modify it under the terms of the GNU General 
@@ -33,6 +31,7 @@ import numpy as np
 import os.path
 import csv
 
+default_file_extension = '.jpg'
 
 class DropAssay():
 	def __init__ (self, assay_path):
@@ -55,7 +54,7 @@ class DropAssay():
 				data['time'] = row[0]
 				data['sp_temperature'] = row[2]
 				frame['data'] = data
-				frame_image_path = self.assay_path + '/' + str(id_number) + '.png'
+				frame_image_path = self.assay_path + '/' + str(id_number) + default_file_extension
 				if os.path.exists(frame_image_path):
 					frame['image_path'] = frame_image_path
 				else:
@@ -121,7 +120,7 @@ class DropAssayViewer():
 		# If we have more than one event, total:
 		if len(output_table) > 1:
 			# Temperatures may not be monotonically increasing, sort output table by temperature to mitigate this.
-			# (we reverse the order to get temperature decreasing ->
+			# (we reverse the order to get temperature decreasing ->)
 			output_table.sort(reverse = True)
 			
 			# Merge adjacent entries with identical temperatures (may result from previous operation).

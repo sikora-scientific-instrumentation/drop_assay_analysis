@@ -1,5 +1,6 @@
-Drop-assay data-processing tool - PRE-RELEASE 1
+Drop-assay data-processing tool - PRE-RELEASE 2
 ----------------------------
+Modified 6/6/21, S.Sikora: Modified to accept .jpg image files by default.
 
 A python tool to assist in the processing and analysis of drop-assay data.
 
