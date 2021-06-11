@@ -34,7 +34,7 @@ import csv
 default_file_extension = '.jpg'
 
 class DropAssay():
-	def __init__ (self, assay_path):
+	def __init__ (self, assay_path, supress_initial_file_warnings = True):
 		
 		self.frames = {}
 		self.assay_path = assay_path
@@ -58,7 +58,8 @@ class DropAssay():
 				if os.path.exists(frame_image_path):
 					frame['image_path'] = frame_image_path
 				else:
-					print('Image file missing for frame # ' + str(id_number))
+					if supress_initial_file_warnings == False:
+						print('Image file missing for frame # ' + str(id_number))
 					frame['image_path'] = 'FILE_NOT_FOUND'
 				self.frames[id_number] = frame
 		else:
@@ -107,13 +108,11 @@ class DropAssayViewer():
 		for frame_id in self.frame_ids:
 			total_events += len(self.drop_assay.frames[frame_id]['events'])
 		
-		cumulative_events = 0.0
 		output_table = []
 		for frame_id in self.frame_ids:
 			events_this_frame = len(self.drop_assay.frames[frame_id]['events'])
 			if events_this_frame > 0:
-				cumulative_events += events_this_frame
-				fraction_frozen_this_frame = cumulative_events / total_events
+				fraction_frozen_this_frame = events_this_frame / total_events
 				tc_temp_this_frame = self.drop_assay.frames[frame_id]['data']['tc_temperature']
 				output_table.append([tc_temp_this_frame, fraction_frozen_this_frame])
 		
@@ -137,9 +136,17 @@ class DropAssayViewer():
 					merged_output_table.append(new_row)
 			output_table = merged_output_table
 		
+		# Convert from fraction frozen per frame to total fraction frozen.
+		accumulator = 0.0
+		output_table_out = []
+		for temperature, ff_this_frame in output_table:
+			accumulator = accumulator + float(ff_this_frame)
+			output_table_out.append([temperature, accumulator])
+		output_table = output_table_out
+		# ................................................................
+		
 		print(output_table)
 		self.WriteOutput(output_table)
-		
 		self.root.destroy()
 	
 	def WriteOutput(self, output_table):

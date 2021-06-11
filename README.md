@@ -1,6 +1,6 @@
-Drop-assay data-processing tool - PRE-RELEASE 2
+Drop-assay data-processing tool - PRE-RELEASE 2.1
 ----------------------------
-Modified 6/6/21, S.Sikora: Modified to accept .jpg image files by default.
+Modified 11/6/21, S.Sikora: Correction of mistake in handling temperature edge-cases in fraction frozen table generation. (temperature, fraction_frozen_total) pairs that comprise the output table were sorted in temperature order to account for rare cases where the temperature series was not monotonically increasing. Adjacent entries with identical temperatures are then summed. However, this needs to be done with (temperature, fraction_frozen_this_frame) pairs, which are then converted to fraction_frozen_total following summation.
 
 A python tool to assist in the processing and analysis of drop-assay data.
 
